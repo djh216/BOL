@@ -430,7 +430,7 @@ export function BolDesk() {
               <p className="max-w-sm text-sm leading-6 text-[#6d625c]">
                 {status === "working"
                   ? "Reading the confirmation and laying out the bill of lading."
-                  : "The finished bill of lading shows up here. It uses the F. Magnotta letterhead, the restaurant name you typed, and the figures from the confirmation."}
+                  : "Upload Order Confirmations and Generate BOL"}
               </p>
             </div>
           )}
