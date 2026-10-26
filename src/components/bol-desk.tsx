@@ -438,10 +438,6 @@ export function BolDesk() {
         {previewPending && pdfUrl ? (
           <p className="text-xs text-[#6d625c]">Updating the preview…</p>
         ) : null}
-        <p className="text-xs leading-5 text-[#6d625c]">
-          Direct delivery fee is printed as {formatMoney(0)}, the same line that appears on the
-          Magnotta form. Freight stays separate from the product price because it is not taxed.
-        </p>
       </section>
     </div>
   );
