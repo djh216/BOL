@@ -166,7 +166,7 @@ export function BolDesk() {
                 id="restaurant"
                 value={restaurantName}
                 onChange={(event) => setRestaurantName(event.target.value)}
-                placeholder="Alba"
+                placeholder="Restaurant Name"
                 autoComplete="organization"
                 className="h-10 bg-white"
               />
