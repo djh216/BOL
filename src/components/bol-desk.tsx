@@ -241,7 +241,7 @@ export function BolDesk() {
               )}
             </Button>
             <Button type="button" variant="outline" className="h-10 bg-white" onClick={() => void loadSample()}>
-              Try the Alba confirmation
+              Generate BOL
             </Button>
           </form>
 
