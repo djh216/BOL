@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FileUp, LoaderCircle } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -411,9 +411,6 @@ export function BolDesk() {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-[#4c0013]">Bill of lading</h2>
-            <p className="text-sm text-[#6d625c]">
-              Letter size. Another page is added only when the product list does not fit.
-            </p>
           </div>
           {pdfUrl ? (
             <a className={cn(buttonVariants(), "h-10 px-3")} href={pdfUrl} download={filename}>
