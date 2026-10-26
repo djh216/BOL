@@ -44,16 +44,6 @@ export function BolDesk() {
     if (status === "error") setStatus("idle");
   }
 
-  async function loadSample() {
-    setError("");
-    setRestaurantName("Alba");
-    const response = await fetch("/samples/alba-order-confirmation.pdf");
-    const blob = await response.blob();
-    const sample = new File([blob], "alba-order-confirmation.pdf", { type: "application/pdf" });
-    setFile(sample);
-    await generate(sample, "Alba");
-  }
-
   async function generate(source = file, name = restaurantName) {
     if (!source) {
       setError("Upload an order confirmation PDF.");
@@ -228,19 +218,13 @@ export function BolDesk() {
               </p>
             ) : null}
 
-            <Button type="submit" disabled={status === "working"} className="h-10">
-              {status === "working" ? (
-                <>
-                  <LoaderCircle className="animate-spin" />
-                  Reading confirmation
-                </>
-              ) : order ? (
-                "Read this confirmation again"
-              ) : (
-                "Generate bill of lading"
-              )}
-            </Button>
-            <Button type="button" variant="outline" className="h-10 bg-white" onClick={() => void loadSample()}>
+            <Button
+              type="submit"
+              variant="outline"
+              className="h-10 bg-white"
+              disabled={status === "working"}
+            >
+              {status === "working" ? <LoaderCircle className="animate-spin" /> : null}
               Generate BOL
             </Button>
           </form>
