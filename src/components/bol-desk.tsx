@@ -278,13 +278,7 @@ export function BolDesk() {
 
           {order ? (
             <div className="mt-6 flex flex-col gap-4 border-t border-[#eadfce] pt-5">
-              <div>
-                <h2 className="text-sm font-semibold text-[#4c0013]">Ship to</h2>
-                <p className="mt-1 text-xs leading-5 text-[#6d625c]">
-                  Taken from the confirmation. Change the restaurant name, address, or box count,
-                  then choose Update BOL to reprint the bill.
-                </p>
-              </div>
+              <h2 className="text-sm font-semibold text-[#4c0013]">Ship to</h2>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="street">Street</Label>
                 <Input
