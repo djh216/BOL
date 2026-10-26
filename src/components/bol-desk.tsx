@@ -197,7 +197,7 @@ export function BolDesk() {
     <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)] lg:items-start">
       <Card className="bg-[#fffdf8] shadow-sm ring-[#e6d9cc]">
         <CardHeader>
-          <CardTitle className="text-[#4c0013]">Order confirmation</CardTitle>
+          <CardTitle className="text-[#4c0013]">Order Confirmation</CardTitle>
         </CardHeader>
         <CardContent>
           <form
