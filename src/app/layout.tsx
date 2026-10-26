@@ -27,10 +27,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             />
             <div>
               <p className="text-[11px] font-semibold tracking-[0.16em] text-[#8a6a4f]">
-                F. MAGNOTTA, LLC
+                F. MAGNOTTA LLC
               </p>
               <h1 className="text-xl font-semibold tracking-tight text-[#4c0013] sm:text-2xl">
-                Bill of lading
+                Bill of Lading Generator
               </h1>
             </div>
           </div>
