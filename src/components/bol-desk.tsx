@@ -306,10 +306,6 @@ export function BolDesk() {
                   onChange={(event) => setTotalBoxes(event.target.value.replace(/[^\d]/g, ""))}
                   className="h-10 bg-white"
                 />
-                <p className="text-xs leading-5 text-[#6d625c]">
-                  One box is a case of 12 bottles, rounded up from {order.totalBottles} bottles.
-                  Change it if this order ships in a different number of boxes.
-                </p>
               </div>
               {fieldsChanged ? (
                 <Button
