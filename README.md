@@ -2,7 +2,7 @@
 
 Turn a special-order confirmation into an F. Magnotta bill of lading.
 
-Type the restaurant name, upload the order confirmation PDF, and download a two-page letter-size bill of lading. The form matches the Magnotta bill of lading: letterhead, customer and order block, PLCB product table, tax and freight, proof-of-delivery lines, and a signature page.
+Type the restaurant name, upload the order confirmation PDF, and download a letter-size bill of lading. The form matches the Magnotta bill of lading: letterhead, customer and order block, PLCB product table, tax and freight, and proof-of-delivery lines. It stays on one page unless the product list runs longer.
 
 The confirmation supplies the ship-to address, order number, order date, product codes, bottle counts, prices, tax, and freight. The restaurant name is typed in, because the confirmation does not include it. Direct delivery fee prints as $0.00. Total boxes starts at one case per 12 bottles, rounded up, and can be changed before download.
 

@@ -366,7 +366,7 @@ export function BolDesk() {
           <div>
             <h2 className="text-lg font-semibold text-[#4c0013]">Bill of lading</h2>
             <p className="text-sm text-[#6d625c]">
-              Two pages, letter size. Page 2 is the signature line for the receiver.
+              Letter size. Another page is added only when the product list does not fit.
             </p>
           </div>
           {pdfUrl ? (

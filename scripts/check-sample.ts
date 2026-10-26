@@ -88,7 +88,8 @@ async function checkAlba() {
   ]) {
     assert(findItem(items, text), `missing "${text}" on Alba bill of lading`);
   }
-  assert(items.some((item) => item.str.includes("Page 2 of")), "missing page label");
+  assert(findItem(items, "Page 1 of 1"), "Alba bill of lading should stay on one page");
+  assert(!items.some((item) => item.page > 1), "Alba bill of lading gained an extra page");
   await mkdir("/tmp/bol-check", { recursive: true });
   await writeFile("/tmp/bol-check/alba.pdf", pdf);
   console.log("alba ok", pdf.length, "bytes");
@@ -164,11 +165,10 @@ async function checkAltaViaLayout() {
     ["PROOF OF DELIVERY", 1, 235.8, 155.7],
     ["Because freight on Special Orders is not subject", 1, 65.6, 261.3],
     ["product price.", 1, 65.6, 235.7],
-    ["Received By (Print Name)", 2, 65.6, 737.6],
-    ["Date", 2, 273.3, 737.6],
-    ["Signature", 2, 377.1, 737.6],
-    ["Page 1 of 2", 1, 532, 41.7],
-    ["Page 2 of 2", 2, 532, 41.7],
+    ["Received By (Print Name)", 1, 65.6, 92.1],
+    ["Date", 1, 273.3, 92.1],
+    ["Signature", 1, 377.1, 92.1],
+    ["Page 1 of 1", 1, 536, 41.7],
   ];
 
   const used = new Set<Item>();
@@ -193,6 +193,30 @@ async function checkAltaViaLayout() {
   console.log("alta via worst anchor delta", worst.toFixed(2), "pt");
   if (misses.length) throw new Error(`Layout drifted: ${misses.join("; ")}`);
   console.log("alta via layout ok");
+
+  const longOrder: BolDocument = {
+    ...altaVia,
+    lines: Array.from({ length: 30 }, (_, index) => ({
+      plcbCode: String(100000 + index),
+      name: `Estate Bottling Reserve ${index + 1}`,
+      bottles: 6,
+      unitPrice: 12.5,
+      grossPrice: 75,
+    })),
+    totalBottles: 180,
+    totalBoxes: 15,
+  };
+  const longPdf = Buffer.from(await buildBillOfLadingPdf(longOrder));
+  const longItems = await textItems(new Uint8Array(longPdf));
+  assert(
+    longItems.some((item) => item.str.startsWith("Page 2 of")),
+    "a long product list should continue onto another page",
+  );
+  assert(
+    longItems.some((item) => item.str === "Received By (Print Name)"),
+    "signature labels missing from the long bill of lading",
+  );
+  console.log("long order paginates");
 }
 
 checkAlba()

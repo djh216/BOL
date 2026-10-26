@@ -10,7 +10,8 @@ const PAGE_H = 792;
 
 const LEFT = 65.597;
 const RIGHT = 546.403;
-const CONTENT_BOTTOM = 704;
+const SIGNATURE_LABEL_GAP = 14;
+const CONTENT_BOTTOM = 728;
 
 const WINE = rgb(76 / 255, 0, 19 / 255);
 const SLATE = rgb(75 / 255, 85 / 255, 99 / 255);
@@ -406,12 +407,13 @@ function drawTail(page: PDFPage, fonts: Fonts, doc: BolDocument, dividerTop: num
       color: SIGN_LINE,
     });
   }
+  drawSignatureLabels(page, fonts, lineTop + SIGNATURE_LABEL_GAP);
 }
 
-function drawSignatureLabels(page: PDFPage, fonts: Fonts) {
-  drawText(page, "Received By (Print Name)", fonts.semibold, 9.6, 65.6, 54.4, SLATE);
-  drawText(page, "Date", fonts.semibold, 9.6, 273.3, 54.4, SLATE);
-  drawText(page, "Signature", fonts.semibold, 9.6, 377.1, 54.4, SLATE);
+function drawSignatureLabels(page: PDFPage, fonts: Fonts, baselineFromTop: number) {
+  drawText(page, "Received By (Print Name)", fonts.semibold, 9.6, 65.6, baselineFromTop, SLATE);
+  drawText(page, "Date", fonts.semibold, 9.6, 273.3, baselineFromTop, SLATE);
+  drawText(page, "Signature", fonts.semibold, 9.6, 377.1, baselineFromTop, SLATE);
 }
 
 function continuationBanner(page: PDFPage, fonts: Fonts, doc: BolDocument) {
@@ -436,12 +438,12 @@ function planContent(rows: MeasuredRow[], headerTop: number): { slices: ContentS
 
   let tail = CANON_TAIL;
   let t = 0;
-  while (naturalDivider + tail.lines > CONTENT_BOTTOM && t < 1) {
+  while (naturalDivider + tail.lines + SIGNATURE_LABEL_GAP > CONTENT_BOTTOM && t < 1) {
     t = Math.min(1, t + 0.05);
     tail = mixTail(t);
   }
 
-  const tailFits = naturalDivider + tail.lines <= CONTENT_BOTTOM + 2;
+  const tailFits = naturalDivider + tail.lines + SIGNATURE_LABEL_GAP <= CONTENT_BOTTOM + 2;
   if (tailFits) {
     const firstBaseline = canonical ? CANON_ROW_BASELINE + (headerTop - HEADER_TOP) : headerTop + 32 + 16;
     return {
@@ -470,7 +472,7 @@ function planContent(rows: MeasuredRow[], headerTop: number): { slices: ContentS
     let used = 0;
     while (index < rows.length) {
       const row = rows[index];
-      const limit = CONTENT_BOTTOM - 36;
+      const limit = CONTENT_BOTTOM - SIGNATURE_LABEL_GAP - 24;
       if (taken.length > 0 && bodyTop + used + row.height > limit) break;
       taken.push(row);
       used += row.height;
@@ -478,7 +480,7 @@ function planContent(rows: MeasuredRow[], headerTop: number): { slices: ContentS
     }
     const last = index >= rows.length;
     const dividerTop = bodyTop + used + 8;
-    const roomForTail = dividerTop + COMPACT_TAIL.lines <= CONTENT_BOTTOM;
+    const roomForTail = dividerTop + COMPACT_TAIL.lines + SIGNATURE_LABEL_GAP <= CONTENT_BOTTOM;
     slices.push({
       rows: taken,
       headerTop: top,
@@ -526,7 +528,7 @@ export async function buildBillOfLadingPdf(
   const rows = measureRows(doc.lines, fonts);
   const block = customerBlock(doc, fonts);
   const plan = planContent(rows, block.headerTop);
-  const pageCount = plan.slices.length + 1;
+  const pageCount = plan.slices.length;
 
   pdf.setTitle(`Bill of Lading - ${doc.restaurantName}`);
   pdf.setAuthor("F. Magnotta, LLC");
@@ -555,10 +557,6 @@ export async function buildBillOfLadingPdf(
 
     drawFooter(page, fonts.regular, index + 1, pageCount, stamp);
   });
-
-  const labelPage = pdf.addPage([PAGE_W, PAGE_H]);
-  drawSignatureLabels(labelPage, fonts);
-  drawFooter(labelPage, fonts.regular, pageCount, pageCount, stamp);
 
   return pdf.save();
 }
