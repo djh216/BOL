@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FileUp, LoaderCircle } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { billFileName, formatMoney } from "@/lib/format";
@@ -198,10 +198,6 @@ export function BolDesk() {
       <Card className="bg-[#fffdf8] shadow-sm ring-[#e6d9cc]">
         <CardHeader>
           <CardTitle className="text-[#4c0013]">Order confirmation</CardTitle>
-          <CardDescription>
-            Type the restaurant name, then upload the special-order PDF. The ship-to address, order
-            number, date, bottles, and prices are read from that file.
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <form
