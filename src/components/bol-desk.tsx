@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { FileUp, LoaderCircle } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,13 @@ import type { ParsedOrder } from "@/lib/types";
 import { cn } from "cn";
 
 type Status = "idle" | "working" | "ready" | "error";
+
+type PrintedFields = {
+  restaurantName: string;
+  street: string;
+  cityLine: string;
+  totalBoxes: string;
+};
 
 export function BolDesk() {
   const [restaurantName, setRestaurantName] = useState("");
@@ -24,12 +31,20 @@ export function BolDesk() {
   const [error, setError] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
   const [previewPending, setPreviewPending] = useState(false);
+  const [printed, setPrinted] = useState<PrintedFields | null>(null);
   const requestId = useRef(0);
 
   const filename = useMemo(() => {
     if (!order) return "bill-of-lading.pdf";
-    return billFileName(restaurantName || "Restaurant", order.orderNumber);
-  }, [order, restaurantName]);
+    return billFileName(printed?.restaurantName || restaurantName || "Restaurant", order.orderNumber);
+  }, [order, printed, restaurantName]);
+
+  const fieldsChanged =
+    printed !== null &&
+    (printed.restaurantName !== restaurantName.trim() ||
+      printed.street !== street.trim() ||
+      printed.cityLine !== cityLine.trim() ||
+      printed.totalBoxes !== totalBoxes);
 
   function takeFile(next: File | null) {
     if (!next) return;
@@ -66,10 +81,24 @@ export function BolDesk() {
       if (!parsedResponse.ok) {
         throw new Error(parsedBody.error || "The order confirmation could not be read.");
       }
+      const printedFields = {
+        restaurantName: name.trim(),
+        street: parsedBody.street.trim(),
+        cityLine: parsedBody.cityLine.trim(),
+        totalBoxes: String(parsedBody.totalBoxes),
+      };
       setOrder(parsedBody);
       setStreet(parsedBody.street);
       setCityLine(parsedBody.cityLine);
-      setTotalBoxes(String(parsedBody.totalBoxes));
+      setTotalBoxes(printedFields.totalBoxes);
+      await renderPdf({
+        order: parsedBody,
+        restaurantName: printedFields.restaurantName,
+        street: printedFields.street,
+        cityLine: printedFields.cityLine,
+        totalBoxes: parsedBody.totalBoxes,
+      });
+      setPrinted(printedFields);
       setStatus("ready");
     } catch (cause) {
       setStatus("error");
@@ -122,25 +151,47 @@ export function BolDesk() {
     }
   }
 
-  useEffect(() => {
-    if (!order || status === "working" || totalBoxes === "") return;
+  async function updateBol() {
+    if (!order) return;
     const boxes = Number(totalBoxes);
-    if (!restaurantName.trim() || !street.trim() || !Number.isInteger(boxes) || boxes < 0) return;
-    const handle = window.setTimeout(() => {
-      void renderPdf({
+    if (!restaurantName.trim()) {
+      setError("Type the restaurant name. It is printed as the customer on the bill of lading.");
+      setStatus("error");
+      return;
+    }
+    if (!street.trim()) {
+      setError("Enter the street address for the bill of lading.");
+      setStatus("error");
+      return;
+    }
+    if (totalBoxes === "" || !Number.isInteger(boxes) || boxes < 0) {
+      setError("Enter the number of boxes for this delivery.");
+      setStatus("error");
+      return;
+    }
+
+    const printedFields = {
+      restaurantName: restaurantName.trim(),
+      street: street.trim(),
+      cityLine: cityLine.trim(),
+      totalBoxes,
+    };
+    setError("");
+    try {
+      await renderPdf({
         order,
-        restaurantName: restaurantName.trim(),
-        street: street.trim(),
-        cityLine: cityLine.trim(),
+        restaurantName: printedFields.restaurantName,
+        street: printedFields.street,
+        cityLine: printedFields.cityLine,
         totalBoxes: boxes,
-      }).catch((cause: unknown) => {
-        setError(cause instanceof Error ? cause.message : "The bill of lading could not be created.");
       });
-    }, 280);
-    return () => window.clearTimeout(handle);
-    // Re-render when the editable fields change. `order` identity changes only on a new parse.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restaurantName, street, cityLine, totalBoxes, order]);
+      setPrinted(printedFields);
+      setStatus("ready");
+    } catch (cause) {
+      setStatus("error");
+      setError(cause instanceof Error ? cause.message : "The bill of lading could not be updated.");
+    }
+  }
 
   return (
     <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)] lg:items-start">
@@ -234,8 +285,8 @@ export function BolDesk() {
               <div>
                 <h2 className="text-sm font-semibold text-[#4c0013]">Ship to</h2>
                 <p className="mt-1 text-xs leading-5 text-[#6d625c]">
-                  Taken from the confirmation. Edit a line if the delivery address should read
-                  differently on the bill of lading.
+                  Taken from the confirmation. Change the restaurant name, address, or box count,
+                  then choose Update BOL to reprint the bill.
                 </p>
               </div>
               <div className="flex flex-col gap-2">
@@ -270,6 +321,17 @@ export function BolDesk() {
                   Change it if this order ships in a different number of boxes.
                 </p>
               </div>
+              {fieldsChanged ? (
+                <Button
+                  type="button"
+                  className="h-10"
+                  disabled={previewPending}
+                  onClick={() => void updateBol()}
+                >
+                  {previewPending ? <LoaderCircle className="animate-spin" /> : null}
+                  Update BOL
+                </Button>
+              ) : null}
 
               <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
                 <div>
