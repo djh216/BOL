@@ -1,0 +1,37 @@
+{
+  "name": "bill-of-lading",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 4327",
+    "build": "next build",
+    "start": "next start -p 4327",
+    "lint": "eslint",
+    "test": "tsx scripts/check-sample.ts"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.9.0",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.5.0",
+    "lucide-react": "^1.61.0",
+    "next": "16.4.3",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.4.299",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "shadcn": "^4.22.1",
+    "tw-animate-css": "^1.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}
