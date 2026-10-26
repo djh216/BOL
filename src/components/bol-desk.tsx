@@ -396,7 +396,7 @@ export function BolDesk() {
       <section className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-[#4c0013]">Bill of lading</h2>
+            <h2 className="text-lg font-semibold text-[#4c0013]">Bill of Lading</h2>
           </div>
           {pdfUrl ? (
             <a className={cn(buttonVariants(), "h-10 px-3")} href={pdfUrl} download={filename}>
